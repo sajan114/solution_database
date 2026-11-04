@@ -1,3 +1,16 @@
+## Run the project on Windows
+
+Open the project folder in VS Code. In the PowerShell terminal, run these commands one at a time:
+
+```powershell
+composer install
+if (-not (Test-Path .env)) { Copy-Item .env.example .env; php artisan key:generate }
+if (-not (Test-Path .\database\database.sqlite)) { New-Item -ItemType File .\database\database.sqlite }
+php artisan migrate
+php artisan serve
+```
+
+Open http://127.0.0.1:8000 in your browser. To check that the app works, add a test problem, edit it, then delete it. Press Ctrl+C in the terminal to stop the server.
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
