@@ -1,37 +1,64 @@
 import './bootstrap';
 
-// Live tag filtering on the solution page: hides products that do not have
-// every ticked tag, without reloading. The form still works without JS.
 const form = document.getElementById('tag-filter');
 
 if (form) {
-    const items = Array.from(document.querySelectorAll('#product-list li'));
-    const count = document.getElementById('product-count');
-    const empty = document.getElementById('no-products');
-    const checkboxes = Array.from(form.querySelectorAll('input[name="tags[]"]'));
+    const products = document.querySelectorAll('#product-list li');
+    const checkboxes = form.querySelectorAll('input[name="tags[]"]');
+    const counter = document.getElementById('product-count');
+    const noProductsMessage = document.getElementById('no-products');
 
-    const applyFilter = () => {
-        const selected = checkboxes.filter((c) => c.checked).map((c) => c.value);
-        let visible = 0;
+    function filterProducts() {
+        // 1. Collect the ids of the ticked checkboxes
+        const selectedTags = [];
+        for (const box of checkboxes) {
+            if (box.checked) {
+                selectedTags.push(box.value);
+            }
+        }
 
-        items.forEach((item) => {
-            const tags = item.dataset.tags ? item.dataset.tags.split(',') : [];
-            const match = selected.every((id) => tags.includes(id));
-            item.hidden = !match;
-            if (match) visible++;
-        });
+        // 2. Show or hide each product, and count the visible ones
+        let visibleCount = 0;
 
-        count.textContent = `${visible} of ${items.length} products`;
-        empty.hidden = visible > 0;
+        for (const product of products) {
+            const productTags = product.dataset.tags.split(',');
+            let showProduct = true;
 
-        // Keep the URL shareable.
-        const params = new URLSearchParams();
-        selected.forEach((id) => params.append('tags[]', id));
-        const query = params.toString();
-        history.replaceState(null, '', location.pathname + (query ? `?${query}` : ''));
-    };
+            for (const tagId of selectedTags) {
+                if (!productTags.includes(tagId)) {
+                    showProduct = false;
+                }
+            }
 
-    checkboxes.forEach((c) => c.addEventListener('change', applyFilter));
-    form.addEventListener('submit', (e) => { e.preventDefault(); applyFilter(); });
-    applyFilter();
+            product.hidden = !showProduct;
+
+            if (showProduct) {
+                visibleCount = visibleCount + 1;
+            }
+        }
+
+        // 3. Update the counter text
+        counter.textContent = visibleCount + ' of ' + products.length + ' products';
+
+        // 4. Show the message only when nothing matches
+        if (visibleCount === 0) {
+            noProductsMessage.hidden = false;
+        } else {
+            noProductsMessage.hidden = true;
+        }
+    }
+
+    // Run the filter whenever a checkbox changes
+    for (const box of checkboxes) {
+        box.addEventListener('change', filterProducts);
+    }
+
+    // Stop the form from reloading the page
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        filterProducts();
+    });
+
+    // Run once when the page loads
+    filterProducts();
 }
