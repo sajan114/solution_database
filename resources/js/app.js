@@ -7,58 +7,71 @@ if (form) {
     const checkboxes = form.querySelectorAll('input[name="tags[]"]');
     const counter = document.getElementById('product-count');
     const noProductsMessage = document.getElementById('no-products');
+    const searchInput = document.getElementById('product-search');
 
     function filterProducts() {
-        // 1. Collect the ids of the ticked checkboxes
+        // Get selected tag ids
         const selectedTags = [];
+
         for (const box of checkboxes) {
             if (box.checked) {
                 selectedTags.push(box.value);
             }
         }
 
-        // 2. Show or hide each product, and count the visible ones
+        // Get search text
+        const searchText = searchInput.value.toLowerCase().trim();
+
         let visibleCount = 0;
 
+        // Check each product
         for (const product of products) {
             const productTags = product.dataset.tags.split(',');
+            const productName = product.dataset.name;
+
             let showProduct = true;
 
+            // Check selected tags
             for (const tagId of selectedTags) {
                 if (!productTags.includes(tagId)) {
                     showProduct = false;
                 }
             }
 
+            // Check product name
+            if (!productName.includes(searchText)) {
+                showProduct = false;
+            }
+
             product.hidden = !showProduct;
 
             if (showProduct) {
-                visibleCount = visibleCount + 1;
+                visibleCount++;
             }
         }
 
-        // 3. Update the counter text
-        counter.textContent = visibleCount + ' of ' + products.length + ' products';
+        // Update product count
+        counter.textContent =
+            visibleCount + ' of ' + products.length + ' products';
 
-        // 4. Show the message only when nothing matches
-        if (visibleCount === 0) {
-            noProductsMessage.hidden = false;
-        } else {
-            noProductsMessage.hidden = true;
-        }
+        // Show message if no product matches
+        noProductsMessage.hidden = visibleCount !== 0;
     }
 
-    // Run the filter whenever a checkbox changes
+    // Listen for tag changes
     for (const box of checkboxes) {
         box.addEventListener('change', filterProducts);
     }
 
-    // Stop the form from reloading the page
+    // Listen for search input
+    searchInput.addEventListener('input', filterProducts);
+
+    // Stop form from reloading the page
     form.addEventListener('submit', function (event) {
         event.preventDefault();
         filterProducts();
     });
 
-    // Run once when the page loads
+    // Run when page loads
     filterProducts();
 }
