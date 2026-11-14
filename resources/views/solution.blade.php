@@ -43,13 +43,25 @@
                         @if ($product->vendor)
                             <span class="muted">by {{ $product->vendor }}</span>
                         @endif
+                        @if ($product->pivot->is_partial)
+                            <span class="badge badge-partial" title="Solves only part of the need">Partial solution</span>
+                        @endif
                     </div>
-                    <div class="badges">
-                        @forelse ($product->tags as $tag)
-                            <span class="badge">{{ $tag->name }}</span>
-                        @empty
-                            <span class="muted">No tags</span>
-                        @endforelse
+                    <div class="row-side">
+                        <div class="badges">
+                            @forelse ($product->tags as $tag)
+                                <span class="badge">{{ $tag->name }}</span>
+                            @empty
+                                <span class="muted">No tags</span>
+                            @endforelse
+                        </div>
+                        <form method="POST" action="/solutions/{{ $solution->id }}/products/{{ $product->id }}/partial">
+                            @csrf
+                            @method('PATCH')
+                            <button class="btn" type="submit">
+                                {{ $product->pivot->is_partial ? 'Mark as full solution' : 'Mark as partial' }}
+                            </button>
+                        </form>
                     </div>
                 </li>
             @endforeach

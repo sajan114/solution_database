@@ -37,7 +37,12 @@ class DatabaseSeeder extends Seeder
         $p2 = Product::create(['name' => 'B2B Commerce Pro', 'vendor' => 'Demo Ltd']);
         $p3 = Product::create(['name' => 'FreeCart', 'vendor' => 'Open Inc']);
 
-        $webstore->products()->attach([$p1->id, $p2->id, $p3->id]);
+        // FreeCart only solves part of the webstore need (a free cart, no full shop features).
+        $webstore->products()->attach([
+            $p1->id => ['is_partial' => false],
+            $p2->id => ['is_partial' => false],
+            $p3->id => ['is_partial' => true],
+        ]);
 
         // Product <-> Tag links
         $p1->tags()->attach([$b2c->id, $scale->id]);

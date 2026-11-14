@@ -8,3 +8,4 @@ Route::get('/', [ProblemController::class, 'index']);
 Route::resource('problems', ProblemController::class);
 
 Route::get('/solutions/{solution}', [SolutionController::class, 'show']);
+Route::patch('/solutions/{solution}/products/{product}/partial', [SolutionController::class, 'togglePartial']);

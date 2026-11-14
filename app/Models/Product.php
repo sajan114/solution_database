@@ -11,7 +11,7 @@ class Product extends Model
 
     public function solutions()
     {
-        return $this->belongsToMany(Solution::class);
+        return $this->belongsToMany(Solution::class)->withPivot('is_partial');
     }
 
     public function tags()

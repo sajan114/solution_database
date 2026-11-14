@@ -13,8 +13,8 @@ class SolutionController extends Controller
     {
         $selectedTags = array_map('intval', (array) $request->query('tags', []));
 
-        $products = Product::query()
-            ->whereHas('solutions', fn ($q) => $q->whereKey($solution->id))
+        // Products of this solution; each one carries pivot->is_partial.
+        $products = $solution->products()
             ->withAllTags($selectedTags)
             ->with('tags')
             ->orderBy('name')
@@ -32,5 +32,21 @@ class SolutionController extends Controller
             'tags' => $tags,
             'selectedTags' => $selectedTags,
         ]);
+    }
+
+    // Flip a product between "solves it fully" and "solves it only in part" for this solution.
+    public function togglePartial(Solution $solution, Product $product)
+    {
+        $link = $solution->products()->whereKey($product->id)->first();
+        abort_if($link === null, 404);
+
+        $makePartial = ! $link->pivot->is_partial;
+        $solution->products()->updateExistingPivot($product->id, ['is_partial' => $makePartial]);
+
+        $message = $makePartial
+            ? $product->name . ' is now marked as a partial solution.'
+            : $product->name . ' is now marked as a full solution.';
+
+        return redirect()->back()->with('message', $message);
     }
 }

@@ -151,6 +151,10 @@ a.row-title:hover { text-decoration: underline; }
     background: var(--bg);
 }
 
+.badge-partial { background: #fffaeb; border-color: #fedf89; color: #93370d; margin-left: 4px; }
+.row-side { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 12px; }
+.row-side form { margin: 0; }
+
 .count { color: var(--muted); font-variant-numeric: tabular-nums; margin: 0 0 8px; }
 
 @media (max-width: 560px) {
