@@ -7,10 +7,15 @@ use Illuminate\Http\Request;
 
 class ProblemController extends Controller
 {
-    // READ: list all problems
-    public function index()
+    // READ: list all problems, or only those matching ?q=
+    public function index(Request $request)
     {
-        return view('problems.index', ['problems' => Problem::orderBy('name')->get()]);
+        $q = trim((string) $request->query('q', ''));
+
+        return view('problems.index', [
+            'problems' => Problem::search($q)->orderBy('name')->get(),
+            'q' => $q,
+        ]);
     }
 
     // CREATE: show the empty form

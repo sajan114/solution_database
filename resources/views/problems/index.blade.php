@@ -9,9 +9,15 @@
     </div>
     <p class="lead">Pick the problem you found in the discussion to see solutions that could help.</p>
 
+    @include('partials.search', ['action' => '/', 'q' => $q, 'label' => 'Search problems'])
+
+    @if ($q !== '')
+        <p class="count">{{ $problems->count() }} {{ \Illuminate\Support\Str::plural('problem', $problems->count()) }} found for “{{ $q }}”</p>
+    @endif
+
     <div class="card">
         @if ($problems->isEmpty())
-            <p class="empty">No problems yet. Add the first one.</p>
+            <p class="empty">{{ $q !== '' ? 'No problems match “' . $q . '”.' : 'No problems yet. Add the first one.' }}</p>
         @else
             <ul class="list">
                 @foreach ($problems as $problem)

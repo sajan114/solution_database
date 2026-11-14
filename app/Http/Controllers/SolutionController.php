@@ -9,6 +9,17 @@ use Illuminate\Http\Request;
 
 class SolutionController extends Controller
 {
+    // List all solutions, or only those matching ?q=
+    public function index(Request $request)
+    {
+        $q = trim((string) $request->query('q', ''));
+
+        return view('solutions.index', [
+            'solutions' => Solution::search($q)->withCount(['problems', 'products'])->orderBy('name')->get(),
+            'q' => $q,
+        ]);
+    }
+
     public function show(Request $request, Solution $solution)
     {
         $selectedTags = array_map('intval', (array) $request->query('tags', []));

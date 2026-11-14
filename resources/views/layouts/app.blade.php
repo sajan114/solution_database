@@ -11,7 +11,8 @@
     <div class="container">
         <a class="brand" href="/">Solution Database</a>
         <nav class="site-nav" aria-label="Main">
-            <a href="/" @if (request()->is('/', 'problems*', 'solutions*')) aria-current="page" @endif>Problems</a>
+            <a href="/" @if (request()->is('/', 'problems*')) aria-current="page" @endif>Problems</a>
+            <a href="/solutions" @if (request()->is('solutions*')) aria-current="page" @endif>Solutions</a>
         </nav>
     </div>
 </header>

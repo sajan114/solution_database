@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Searchable;
 use Illuminate\Database\Eloquent\Model;
 
 class Solution extends Model
 {
+    use Searchable;
+
     protected $guarded = [];
 
     public function problems()
