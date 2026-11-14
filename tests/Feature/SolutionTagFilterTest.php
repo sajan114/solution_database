@@ -27,7 +27,7 @@ class SolutionTagFilterTest extends TestCase
         $this->get("/solutions/{$solution->id}?tags[]={$b2b->id}")
             ->assertOk()
             ->assertSee('Alpha')
-            ->assertDontSee('Beta (');
+            ->assertDontSee('Beta');
 
         $this->get("/solutions/{$solution->id}")
             ->assertOk()

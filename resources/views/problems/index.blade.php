@@ -1,16 +1,31 @@
-<h1>Problems</h1>
+@extends('layouts.app')
 
-@if (session('message'))
-    <p><strong>{{ session('message') }}</strong></p>
-@endif
+@section('title', 'Problems')
 
-<p><a href="/problems/create">Add new problem</a></p>
+@section('content')
+    <div class="page-head">
+        <h1>Problems</h1>
+        <a class="btn btn-primary" href="/problems/create">Add problem</a>
+    </div>
+    <p class="lead">Pick the problem you found in the discussion to see solutions that could help.</p>
 
-<ul>
-    @foreach ($problems as $problem)
-        <li>
-            <a href="/problems/{{ $problem->id }}">{{ $problem->name }}</a>
-            - <a href="/problems/{{ $problem->id }}/edit">Edit</a>
-        </li>
-    @endforeach
-</ul>
+    <div class="card">
+        @if ($problems->isEmpty())
+            <p class="empty">No problems yet. Add the first one.</p>
+        @else
+            <ul class="list">
+                @foreach ($problems as $problem)
+                    <li class="row">
+                        <div class="row-main">
+                            <a class="row-title" href="/problems/{{ $problem->id }}">{{ $problem->name }}</a>
+                            @if ($problem->description)
+                                <div class="muted">{{ \Illuminate\Support\Str::limit($problem->description, 100) }}</div>
+                            @endif
+                        </div>
+                        <a href="/problems/{{ $problem->id }}/edit">Edit</a>
+                    </li>
+                @endforeach
+            </ul>
+        @endif
+    </div>
+@endsection
