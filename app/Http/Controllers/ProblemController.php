@@ -10,12 +10,14 @@ class ProblemController extends Controller
     // READ: list all problems, or only those matching ?q=
     public function index(Request $request)
     {
-        $q = trim((string) $request->query('q', ''));
+        [$q, $errors] = $this->searchTerm($request);
 
-        return view('problems.index', [
+        $view = view('problems.index', [
             'problems' => Problem::search($q)->orderBy('name')->get(),
             'q' => $q,
         ]);
+
+        return $errors ? $view->withErrors($errors) : $view;
     }
 
     // CREATE: show the empty form
@@ -28,8 +30,8 @@ class ProblemController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name' => 'required|max:255',
-            'description' => 'nullable',
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:5000',
         ]);
 
         Problem::create($data);
@@ -53,8 +55,8 @@ class ProblemController extends Controller
     public function update(Request $request, Problem $problem)
     {
         $data = $request->validate([
-            'name' => 'required|max:255',
-            'description' => 'nullable',
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:5000',
         ]);
 
         $problem->update($data);
